@@ -27,7 +27,7 @@ const UserDetailScreen = () => {
    const isNewUser = params?.isNewUser === "yes" ? true :  false
    console.log(isNewUser)
 
-  const { userProfileData, updateUserProfile , userModelID } = userStore();
+  const { userProfileData, updateUserProfile , userModelID , setMode } = userStore();
 
   const [keywords, setKeywords] = useState("");
   const [description, setDescription] = useState("");
@@ -78,7 +78,8 @@ const UserDetailScreen = () => {
       
       if (response.success) {
         Alert.alert("Success", response.message || "Profile updated successfully!");
-       
+         await setMode('User') 
+         console.log("I am called")
          router.replace("/(main)");
       } else {
         Alert.alert("Error", response.message || "Failed to update profile. Please try again.");

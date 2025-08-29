@@ -69,7 +69,7 @@ const ForgotPassword = () => {
         params: {email , type : "forget" },
       });
     } else {
-      setError(response || "Failed to send OTP. Try again.");
+      setError(response.message || "Failed to send OTP. Try again.");
     }
   };
 

@@ -1,22 +1,54 @@
-import React from 'react';
-import { Stack, Tabs } from 'expo-router';
-import CustomNavigation from '@/components/CustomNavigation';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { View, Text } from 'react-native'
+import React from 'react'
+import { SafeAreaProvider } from 'react-native-safe-area-context'
+import { Stack } from 'expo-router'
+import userStore from '@/store/userStore'
 
 const _layout = () => {
+
+   const Mode = userStore(state => state.Mode)
+
+
+
   return (
+   <SafeAreaProvider>
     
-      
-        <Tabs tabBar={(props) => <CustomNavigation {...props} />} >
-        <Tabs.Screen  name="index" options={{ title: "Home" , headerShown : false}} />
-        <Tabs.Screen name="search" options={{ title: "Search", headerShown : false }} />
-        
-        <Tabs.Screen name="Mybatches" options={{ title: "Batch" , headerShown : false}} />
-        
-        <Tabs.Screen name="profile" options={{ title: "Profile" , headerShown : false}} />
-      </Tabs>
+ {
+      Mode === 'Admin' ? (
 
-  );
-};
+         <Stack>
+        {/* This Stack.Screen loads the Tabs navigator */}
 
-export default _layout;
+        <Stack.Screen name='(Dashboard)' options={{headerShown : false}} />
+        <Stack.Screen name="(Notabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+
+      </Stack>
+
+        
+      ) : (
+
+
+         <Stack>
+        {/* This Stack.Screen loads the Tabs navigator */}
+
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name='(Dashboard)' options={{headerShown : false}} />
+        {/* This Stack.Screen loads the NoTabScreen folder, which contains AdminUpdate.tsx */}
+        <Stack.Screen name="(Notabs)" options={{ headerShown: false }} />
+
+      </Stack>
+
+
+
+        
+      )
+
+     }
+
+    </SafeAreaProvider>
+  )
+}
+
+export default _layout
+

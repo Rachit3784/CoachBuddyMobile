@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { View, Text, TouchableOpacity, TextInput, FlatList, Image, Dimensions, ActivityIndicator } from "react-native";
+import { View, Text, TouchableOpacity, TextInput, FlatList, Image, Dimensions, ActivityIndicator, Alert } from "react-native";
 import { SafeAreaProvider, useSafeAreaInsets } from "react-native-safe-area-context";
 import { demoBatches } from "@/Database/LocalDataBase";
 
@@ -11,7 +11,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { Feather, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import userStore from "@/store/userStore";
+import userStore, { BASE_URL } from "@/store/userStore";
 import { router } from "expo-router";
 
 const { width , height } = Dimensions.get('window');
@@ -151,9 +151,10 @@ const adBanners = [
 
 
 const Index = () => {
-  const {userName ,userModelID , loginWithCookie , token , logout} = userStore();
-  const insets = useSafeAreaInsets();
 
+  const {userName ,userModelID , loginWithCookie , token , logout , Mode , setMode , AdminId} = userStore();
+  const insets = useSafeAreaInsets();
+  const [toggle , setToggle] = useState(false);
 
   const [courses, setCourses] = useState([]);
   const [page, setPage] = useState(1);
@@ -162,6 +163,43 @@ const Index = () => {
 
   const prevScrollY = useSharedValue(0);
   const headerVisible = useSharedValue(true);
+useEffect(()=>{
+    const cookieCheck = async ()=>{
+      
+      
+      setLoading(true);
+
+    if(token){
+      
+
+const response =  await loginWithCookie(token)
+
+if(!response.success){
+
+     logout()
+
+    }
+
+
+
+
+      }
+      
+      
+
+    fetchBatchByPage()
+    
+     
+    }
+
+
+    
+    cookieCheck()
+  
+   
+    
+   },[])
+
 
   
 const itemsPerPage = 10;
@@ -172,14 +210,13 @@ const fetchBatchByPage = async () => {
   try {
     let url
     if(userModelID){
-       url = `http://10.164.89.113:4000/batch/fetchByPage?page=${page}&limit=${itemsPerPage}&userId=${userModelID}`
+       url = `${BASE_URL}/batch/fetchByPage?page=${page}&limit=${itemsPerPage}&userId=${userModelID}`
     }
     else{
-     url =  `http://10.164.89.113:4000/batch/fetchByPage?page=${page}&limit=${itemsPerPage}`
+     url =  `${BASE_URL}/batch/fetchByPage?page=${page}&limit=${itemsPerPage}`
     }
 
-    console.log(url)
-   console.log(token)
+    
     const res = await fetch(
       
       url,
@@ -212,42 +249,7 @@ const fetchBatchByPage = async () => {
 
 
 
-   useEffect(()=>{
-    const cookieCheck = async ()=>{
-      
-      
-      setLoading(true);
-
-    if(token){
-      
-
-const response =  await loginWithCookie(token)
-console.log(userModelID) 
-if(!response.success){
-
-     logout()
-
-    }
-
-console.log(userModelID) 
-
-
-      }
-      
-      
-
-    fetchBatchByPage()
-    
-     
-    }
-
-
-    
-    cookieCheck()
-  
    
-    
-   },[])
 
 
   
@@ -413,7 +415,8 @@ console.log(userModelID)
                 borderRadius: 12,
               }}>
 
-                <Ionicons name="search-outline" size={22} color="#666" />
+                <Ionicons name="chatbubble-outline" size={22} color="black" />
+                
               </TouchableOpacity>
               
               <TouchableOpacity style={{
@@ -444,13 +447,19 @@ console.log(userModelID)
           <View style={{
             flexDirection: "row",
             alignItems: "center",
-            backgroundColor: "#f8f9fa",
-            marginHorizontal: 20,
+            width : width,
+            gap : 5,
             borderRadius: 16,
-            paddingHorizontal: 16,
-            paddingVertical: 4,
+            paddingHorizontal: 13,
+            paddingVertical: 3,
+            
+            justifyContent : 'space-between'
           }}>
-            <Feather name="search" size={18} color="#999" />
+            <View style = {{display : 'flex' , alignItems : 'center' , flexDirection : 'row' , width : width*0.8,
+              borderColor : 'black' , borderWidth : 1 ,backgroundColor: "#f8f9fa", borderRadius : 10 , height : height*0.059,
+              paddingHorizontal : 10
+            }}>
+              <Feather name="search" size={18} color="#999" />
             <TextInput 
               placeholder="Search courses, instructors..." 
               placeholderTextColor="#999"
@@ -458,12 +467,40 @@ console.log(userModelID)
                 flex: 1,
                 fontSize: 15, 
                 color: "#333",
-                paddingVertical: 12,
+                 
                 paddingLeft: 12,
               }}
             />
-            <TouchableOpacity>
-              <MaterialIcons name="tune" size={20} color="#666" />
+
+            </View>
+
+            <TouchableOpacity 
+
+            style = {{backgroundColor : "#f1f1f1ff" , padding : 5 , borderRadius : 10 , borderColor : 'black' , borderWidth : 1}}
+            onPress={ async ()=>{
+
+             
+            
+             setMode('User')
+            console.log('Dekho ab ' , Mode)
+ 
+                
+            }}
+            >
+              {toggle ? (<ActivityIndicator size={'small'} color={'#000000'} />)
+               : (
+                <>
+                
+                { Mode === 'User' ? <Feather 
+              
+              name="toggle-left" size={28} color="black" />
+              :
+
+              <Feather name="toggle-right" size={28} color="black" /> }
+
+                </>
+               )
+            }
             </TouchableOpacity>
           </View>
         </Animated.View>

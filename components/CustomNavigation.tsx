@@ -177,7 +177,9 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 
+
 const { width, height } = Dimensions.get("window");
+
 
 // Tab configuration with proper icons and labels
 const tabIcons = {
@@ -196,8 +198,9 @@ function CustomNavigation({ state, descriptors, navigation }) {
       <View style={styles.bottomTabBar}>
         {state.routes.map((route, index) => {
           const { options } = descriptors[route.key];
+
           const tabInfo = tabIcons[route.name];
-          
+          console.log("User Ke Mode Me")
           // Skip if tab info not found
           if (!tabInfo) return null;
 
